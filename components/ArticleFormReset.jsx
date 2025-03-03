@@ -1,7 +1,8 @@
 "use client";
 import { X } from "lucide-react";
 import Link from "next/link";
-export default function SearchFormReset() {
+
+export default function ArticleFormReset() {
   const reset = function () {
     const form = document.querySelector(".search-form");
     if (form) {

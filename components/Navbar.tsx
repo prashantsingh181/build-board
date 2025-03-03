@@ -7,17 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 export default async function Navbar() {
   const session = await auth();
   return (
-    <header className="px-5 py-3 bg-white shadow-sm font-work-sans">
+    <header className="px-5 py-3 bg-white shadow border border-slate-300 font-work-sans">
       <nav className="flex justify-between items-center">
         <Link href="/">
-          <Image src="/logo.png" alt="logo" width={144} height={30} />
+          <Image src="/logo.png" alt="logo" width={180} height={30} />
         </Link>
         <div className="flex gap-5 items-center text-black">
           {session && session?.user ? (
             <>
-              <Link href="/startup/create">
+              <Link href="/article/create" className="flex gap-2">
+                <BadgePlus className="size-6" />
                 <span className="max-sm:hidden">Create</span>
-                <BadgePlus className="size-6 sm:hidden" />
               </Link>
               <form
                 action={async () => {
@@ -25,9 +25,9 @@ export default async function Navbar() {
                   await signOut({ redirectTo: "/" });
                 }}
               >
-                <button type="submit">
-                  <span className="max-sm:hidden">Create</span>
-                  <LogOut className="size-6 sm:hidden text-red-500" />
+                <button type="submit" className="flex gap-2">
+                  <LogOut className="size-6 text-red-500" />
+                  <span className="max-sm:hidden">Logout</span>
                 </button>
               </form>
               <Link href={`/user/${session?.id}`}>

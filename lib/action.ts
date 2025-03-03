@@ -20,7 +20,7 @@ export async function createPitch(formData: FormData, pitch: string) {
   const slug = slugify(title as string, { lower: true, strict: true });
 
   try {
-    const startup = {
+    const article = {
       title,
       description,
       category,
@@ -36,7 +36,7 @@ export async function createPitch(formData: FormData, pitch: string) {
       pitch,
     };
 
-    const result = await writeClient.create({ _type: "startup", ...startup });
+    const result = await writeClient.create({ _type: "article", ...article });
 
     return parseServerActionResponse({
       ...result,
