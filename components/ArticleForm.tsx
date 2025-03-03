@@ -11,6 +11,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { createPitch } from "@/lib/action";
 
+interface FormState {
+  error: string;
+  status: "INITIAL" | "SUCCESS" | "ERROR";
+}
+
 function ArticleForm() {
   const { toast } = useToast();
   const router = useRouter();
@@ -20,7 +25,7 @@ function ArticleForm() {
     error: "",
     status: "INITIAL",
   });
-  async function handleFormSubmit(formData: FormData) {
+  async function handleFormSubmit(prevState: FormState, formData: FormData) {
     try {
       const formValues = {
         title: formData.get("title"),
