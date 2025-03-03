@@ -22,10 +22,12 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  const [post, { select: editorPosts }] = await Promise.all([
+  const [post, postData] = await Promise.all([
     client.fetch(ARTICLE_BY_ID_QUERY, { id }),
     client.fetch(PLAYLIST_BY_SLUG_QUERY, { slug: "editor-picks-new" }),
   ]);
+
+  const editorPosts = postData?.select ?? [];
 
   if (!post) return notFound();
   const parsedContent = md.render(post?.pitch || "");
@@ -45,7 +47,7 @@ export default async function Page({
         <div className="space-y-5 mt-10 max-w-4xl mx-auto">
           <div className="flex-between gap-5">
             <Link
-              href={`/user/${post.author?.id}`}
+              href={`/user/${post.author?._id}`}
               className="flex gap-2 items-center mb-3"
             >
               <Image
