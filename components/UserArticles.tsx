@@ -1,16 +1,16 @@
-import { client } from "@/sanity/lib/client";
-import { ARTICLES_BY_AUTHOR_QUERY } from "@/sanity/lib/queries";
 import React from "react";
-import ArticleCard, { ArticleTypeCard } from "./ArticleCard";
+import ArticleCard from "./ArticleCard";
 import Image from "next/image";
+import { getArticlesByUserId } from "@/lib/queries/articles";
 
 async function UserArticles({ id }: { id: string }) {
-  const articles = await client.fetch(ARTICLES_BY_AUTHOR_QUERY, { id });
+  // const articles = await client.fetch(ARTICLES_BY_AUTHOR_QUERY, { id });
+  const articles = await getArticlesByUserId(id);
   return (
     <>
       {articles.length > 0 ? (
         <ul className="card_grid-sm">
-          {articles.map((article: ArticleTypeCard) => (
+          {articles.map((article) => (
             <ArticleCard key={article._id} post={article} />
           ))}
         </ul>

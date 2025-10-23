@@ -1,8 +1,7 @@
 import { auth } from "@/auth";
 import { ArticleCardSkeleton } from "@/components/ArticleCard";
 import UserArticles from "@/components/UserArticles";
-import { client } from "@/sanity/lib/client";
-import { AUTHOR_BY_ID_QUERY } from "@/sanity/lib/queries";
+import { getAuthorById } from "@/lib/queries/author";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
@@ -11,7 +10,8 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
   const id = (await params).id;
   const session = await auth();
 
-  const user = await client.fetch(AUTHOR_BY_ID_QUERY, { id });
+  // const user = await client.fetch(AUTHOR_BY_ID_QUERY, { id });
+  const user = await getAuthorById(id);
 
   if (!user) return notFound();
   return (
@@ -24,8 +24,8 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
             </h3>
           </div>
           <Image
-            src={user.image}
-            alt={user.name}
+            src={user.image ?? "/placeholderUser.jpg"}
+            alt={user.name ?? "user image"}
             width={220}
             height={220}
             className="profile_image"

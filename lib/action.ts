@@ -3,9 +3,26 @@
 import { auth } from "@/auth";
 import slugify from "slugify";
 import { parseServerActionResponse } from "./utils";
-import { writeClient } from "@/sanity/lib/write-client";
+import { createArticle } from "./queries/articles";
+import { ObjectId } from "mongodb";
 
-export async function createPitch(formData: FormData, pitch: string) {
+interface ErrorResponse {
+  error: string;
+  status: "ERROR";
+}
+
+interface SuccessResponse {
+  error: "";
+  status: "SUCCESS";
+  id: string;
+}
+
+type ActionResponse = SuccessResponse | ErrorResponse;
+
+export async function createPitch(
+  formData: FormData,
+  pitch: string
+): Promise<ActionResponse> {
   const session = await auth();
   if (!session)
     return parseServerActionResponse({
@@ -13,33 +30,28 @@ export async function createPitch(formData: FormData, pitch: string) {
       status: "ERROR",
     });
 
-  const { title, description, category, link } = Object.fromEntries(
-    Array.from(formData).filter(([key]) => key !== "pitch")
-  );
-
+  const title = formData.get("title");
+  const description = formData.get("description");
+  const category = formData.get("category");
+  const image = formData.get("link");
   const slug = slugify(title as string, { lower: true, strict: true });
 
   try {
     const article = {
-      title,
-      description,
-      category,
-      image: link,
-      slug: {
-        _type: "slug",
-        current: slug,
-      },
-      author: {
-        _type: "reference",
-        _ref: session?.id,
-      },
+      title: title ? String(title) : null,
+      description: description ? String(description) : null,
+      category: category ? String(category) : null,
+      image: image ? String(image) : null,
+      slug: slug,
+      authorId: new ObjectId(session?.id),
       pitch,
+      createdAt: new Date()
     };
 
-    const result = await writeClient.create({ _type: "article", ...article });
+    const result = await createArticle(article);
 
     return parseServerActionResponse({
-      ...result,
+      id: result.toString(),
       error: "",
       status: "SUCCESS",
     });

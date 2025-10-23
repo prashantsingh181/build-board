@@ -141,7 +141,7 @@
   }
 
   .article-card_desc {
-    @apply font-normal text-[16px] line-clamp-2 my-3 h-[48px] text-black-100 break-all;
+    @apply font-normal text-[16px] line-clamp-2 my-3 h-[48px] text-black-100;
   }
 
   .article-card_img {
