@@ -70,7 +70,6 @@ export async function getArticlesByUserId(
   authorId: string,
   options?: { exclude: string[] }
 ) {
-  console.log(options);
   const db = await getDb();
   const articleCollection = db.collection("articles");
 

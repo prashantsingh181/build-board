@@ -11,10 +11,6 @@ function ArticleCard({ post }: { post: ArticleWithAuthor }) {
     <li className="article-card group">
       <div className="flex-between">
         <p className="article_card_date">{formatDate(post.createdAt)}</p>
-        <div className="flex gap-1.5">
-          <EyeIcon className="size-6 text-primary" />
-          {/* <span className="text-16-medium">{post.views}</span> */}
-        </div>
       </div>
       <div className="flex-between mt-5 gap-5">
         <div className="flex-1">
