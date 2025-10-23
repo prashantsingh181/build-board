@@ -1,22 +1,15 @@
 import { cn, formatDate } from "@/lib/utils";
-import { EyeIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { Author, Article } from "@/sanity/types";
 import { Skeleton } from "./ui/skeleton";
+import { ArticleWithAuthor } from "@/lib/types";
 
-export type ArticleTypeCard = Omit<Article, "author"> & { author?: Author };
-
-function ArticleCard({ post }: { post: ArticleTypeCard }) {
+function ArticleCard({ post }: { post: ArticleWithAuthor }) {
   return (
     <li className="article-card group">
       <div className="flex-between">
-        <p className="article_card_date">{formatDate(post._createdAt)}</p>
-        <div className="flex gap-1.5">
-          <EyeIcon className="size-6 text-primary" />
-          <span className="text-16-medium">{post.views}</span>
-        </div>
+        <p className="article_card_date">{formatDate(post.createdAt)}</p>
       </div>
       <div className="flex-between mt-5 gap-5">
         <div className="flex-1">
@@ -39,7 +32,13 @@ function ArticleCard({ post }: { post: ArticleTypeCard }) {
       </div>
       <Link href={`/article/${post._id}`}>
         <p className="article-card_desc">{post.description}</p>
-        <img src={post.image} alt="placeholder" className="article-card_img" />
+        {post.image && (
+          <img
+            src={post.image}
+            alt="placeholder"
+            className="article-card_img"
+          />
+        )}
       </Link>
       <div className="flex-between gap-3 mt-5">
         <Link href={`/?query=${post.category?.toLowerCase()}`}>

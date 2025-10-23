@@ -13,7 +13,7 @@ import { createPitch } from "@/lib/action";
 
 interface FormState {
   error: string;
-  status: "INITIAL" | "SUCCESS" | "ERROR";
+  status: string;
 }
 
 function ArticleForm() {
@@ -44,7 +44,7 @@ function ArticleForm() {
           title: "Success",
           description: "Your article has been created successfully.",
         });
-        router.push(`/article/${result._id}`);
+        router.push(`/article/${result.id}`);
       }
       return result;
     } catch (error) {

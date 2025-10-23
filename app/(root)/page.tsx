@@ -1,9 +1,7 @@
 import SearchForm from "@/components/SearchForm";
-import ArticleCard, { ArticleTypeCard } from "@/components/ArticleCard";
-import { client } from "@/sanity/lib/client";
-// import { sanityFetch, SanityLive } from "@/sanity/lib/live";
-import { ARTICLES_QUERY } from "@/sanity/lib/queries";
+import ArticleCard from "@/components/ArticleCard";
 import Image from "next/image";
+import { getArticles } from "@/lib/queries/articles";
 
 export default async function Home({
   searchParams,
@@ -11,10 +9,8 @@ export default async function Home({
   searchParams: Promise<{ query: string }>;
 }) {
   const { query } = await searchParams;
-  const params = { search: query || null };
+  const posts = await getArticles(query);
 
-  const posts = await client.fetch(ARTICLES_QUERY, params);
-  // const { data: posts } = await sanityFetch({ query: ARTICLES_QUERY, params });
   return (
     <>
       <section className="pink_container">
@@ -33,7 +29,7 @@ export default async function Home({
         </p>
         {posts?.length > 0 ? (
           <ul className="mt-7 card_grid">
-            {posts.map((post: ArticleTypeCard) => (
+            {posts.map((post) => (
               <ArticleCard key={post?._id} post={post} />
             ))}
           </ul>
@@ -49,7 +45,6 @@ export default async function Home({
           </div>
         )}
       </section>
-      {/* <SanityLive /> */}
     </>
   );
 }

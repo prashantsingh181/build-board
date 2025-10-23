@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function ArticleFormReset() {
   const reset = function () {
-    const form = document.querySelector(".search-form");
+    const form = document.querySelector(".search-form") as HTMLFormElement;
     if (form) {
       form.reset();
     }

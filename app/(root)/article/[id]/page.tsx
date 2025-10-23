@@ -1,17 +1,13 @@
 import { formatDate } from "@/lib/utils";
-import { client } from "@/sanity/lib/client";
-import {
-  PLAYLIST_BY_SLUG_QUERY,
-  ARTICLE_BY_ID_QUERY,
-} from "@/sanity/lib/queries";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import markdownit from "markdown-it";
-import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import View from "@/components/View";
-import ArticleCard, { ArticleTypeCard } from "@/components/ArticleCard";
+// import { Suspense } from "react";
+// import { Skeleton } from "@/components/ui/skeleton";
+// import View from "@/components/View";
+import { getArticleById } from "@/lib/queries/articles";
+import SimilarArticles from "@/components/SimilarArticles";
 
 const md = markdownit();
 
@@ -22,28 +18,27 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  const [post, postData] = await Promise.all([
-    client.fetch(ARTICLE_BY_ID_QUERY, { id }),
-    client.fetch(PLAYLIST_BY_SLUG_QUERY, { slug: "editor-picks-new" }),
-  ]);
-
-  const editorPosts = postData?.select ?? [];
+  const post = await getArticleById(id);
 
   if (!post) return notFound();
   const parsedContent = md.render(post?.pitch || "");
   return (
     <>
       <section className="pink_container !min-h-[230px]">
-        <p className="tag">{formatDate(post?._createdAt)}</p>
+        <p className="tag">{formatDate(post?.createdAt)}</p>
         <h1 className="heading">{post.title}</h1>
         <p className="sub-heading !max-5xl">{post.description}</p>
       </section>
       <section className="section_container">
-        <img
-          src={post.image}
-          alt="thumbnail"
-          className="w-full h-auto rounded-xl"
-        />
+        {post.image && (
+          <Image
+            src={post.image}
+            alt="thumbnail"
+            className="w-full aspect-video rounded-xl object-cover"
+            height={900}
+            width={1600}
+          />
+        )}
         <div className="space-y-5 mt-10 max-w-4xl mx-auto">
           <div className="flex-between gap-5">
             <Link
@@ -51,7 +46,7 @@ export default async function Page({
               className="flex gap-2 items-center mb-3"
             >
               <Image
-                src={post.author?.image}
+                src={post.author?.image ?? "/placeholderUser.jpg"}
                 alt="avatar"
                 width={64}
                 height={64}
@@ -69,7 +64,7 @@ export default async function Page({
           <h3 className="text-30-bold">Pitch Details</h3>
           {parsedContent ? (
             <article
-              className="prose max-w-4xl font-work-sans break-all"
+              className="prose max-w-4xl font-work-sans"
               dangerouslySetInnerHTML={{ __html: parsedContent }}
             ></article>
           ) : (
@@ -78,19 +73,15 @@ export default async function Page({
         </div>
         <hr className="divider" />
 
-        {editorPosts?.length > 0 && (
-          <div className="max-w-4xl mx-auto">
-            <p className="text-30-semibold">Editor Picks</p>
-            <ul className="mt-7 card_grid-sm">
-              {editorPosts.map((post: ArticleTypeCard) => (
-                <ArticleCard key={post._id} post={post} />
-              ))}
-            </ul>
-          </div>
-        )}
-        <Suspense fallback={<Skeleton className="view_skeleton" />}>
+        <SimilarArticles
+          authorId={post.author._id.toString()}
+          authorName={post.author.name ?? "author"}
+          exclude={[id]}
+        />
+
+        {/* <Suspense fallback={<Skeleton className="view_skeleton" />}>
           <View id={id} />
-        </Suspense>
+        </Suspense> */}
       </section>
     </>
   );
